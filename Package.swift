@@ -5,7 +5,8 @@
 // Layer diagram:
 //   ManifoldKit  (Swift, .interoperabilityMode(.Cxx))
 //     └─ ManifoldBridge  (C++ – our thin wrapper, compiled by SPM)
-//          └─ ManifoldBinary  (static XCFramework bootstrapped into vendor/)
+//          └─ manifold  (static XCFramework bootstrapped into vendor/; named to
+//                        match libmanifold.a via SPM's lib<name>.a convention)
 //
 // Linking strategy:
 //   This package is self-contained once bootstrapped. Run:
@@ -39,7 +40,7 @@ let package = Package(
     ],
     targets: [
         .binaryTarget(
-            name: "ManifoldBinary",
+            name: "manifold",
             path: "vendor/ManifoldBinary.xcframework"
         ),
 
@@ -48,7 +49,7 @@ let package = Package(
         // links the prebuilt static XCFramework slice selected by SwiftPM.
         .target(
             name: "ManifoldBridge",
-            dependencies: ["ManifoldBinary"],
+            dependencies: ["manifold"],
             path: "Sources/ManifoldBridge",
             publicHeadersPath: "include",
             cxxSettings: [
